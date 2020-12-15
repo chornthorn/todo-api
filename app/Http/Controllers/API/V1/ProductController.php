@@ -12,9 +12,15 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return new ProductCollection(Product::paginate(20));
+        if ($request->has('query_string')) {
+            $product = Product::where('product_name', 'LIKE', '%' . $request->query_string . '%')->paginate(10);
+            return new ProductCollection($product);
+        } else {
+            return new ProductCollection(Product::paginate(15));
+        }
+
     }
 
     public function store(Request $request)
@@ -48,16 +54,25 @@ class ProductController extends Controller
 
         $product->update($request->all());
 
-        return response(['status_message' => 'Update successfully'], 200);
+        return response(['statusMessage' => 'Update successfully'], 200);
     }
 
     public function destroy(Product $product)
     {
         if ($product->delete()) {
-            return response(['status_message' => 'Delete successfully'], 200);
+            return response(['statusMessage' => 'Delete successfully'], 200);
         } else {
             return response()->json('error');
         }
+
+    }
+
+    public function searchProduct(Request $request)
+    {
+
+        $query_string =  $request->query_string;
+        $product = Product::where('product_name', 'LIKE', '%' . $query_string . '%')->paginate(10);
+        return new ProductCollection($product);
 
     }
 }

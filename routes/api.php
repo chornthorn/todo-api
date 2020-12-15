@@ -19,4 +19,5 @@ Route::group(['namespace' => 'API\V1'], function () {
     Route::post('product', 'ProductController@store');
     Route::put('product/{product}', 'ProductController@update');
     Route::delete('product/{product}', 'ProductController@destroy');
+    Route::post('search_product', 'ProductController@searchProduct');
 });
